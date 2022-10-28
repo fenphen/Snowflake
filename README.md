@@ -8,51 +8,30 @@ We can create standalone tasks with just one secure statement, or we can also cr
 
 that one task will be executed after another task has been completed.   So in this lab, we'll learn and understand what is a task, will also learn how we can create a
 
-task and the different scheduling methods.   How can we schedule this and use the different methods? How do we create standalone tasks? ..and how do we also create tasks
-
-with dependencies.  We will also learn how we can check the task history.
+task and the different scheduling methods.   How can we schedule this and use the different methods? How do we create standalone tasks? We will see how to create these tasks with dependencies.  We will also learn how we can check the task history.
 
 
 1. Create a  database called Tasks DB and we will set up a table that we will use.
 
-//Create the Tasks_DB
-CREATE OR REPLACE TRANSIENT DATABASE TASKS_DB;
+        //Create the Tasks_DB
+            CREATE OR REPLACE TRANSIENT DATABASE TASKS_DB;
 
-USE TASKS_DB:
+            USE TASKS_DB:
 
-// Prepare the table
-CREATE OR REPLACE TABLE CUSTOMERS (
-    CUSTOMER_ID INT AUTOINCREMENT START = 1 INCREMENT =1,
-    FIRST_NAME VARCHAR(40) DEFAULT 'JENNIFER' ,
-    CREATE_DATE DATE)
+2. Now, let's create a customer table.  It will have three columns. An ID column where we use an auto increment.
 
-So this will be a customer table.
+If no name is specified, then the first name will be 'Marcus'
 
-And in here we have three columns.
 
-So we have just this ID column where we use an auto increment.
 
-So this will be just our idea.
+        // Create our table
+            CREATE OR REPLACE TABLE CUSTOMERS (
+            CUSTOMER_ID INT AUTOINCREMENT START = 1 INCREMENT =1,
+            FIRST_NAME VARCHAR(40) DEFAULT 'Marcus' ,
+            CREATE_DATE DATE)
 
-And then we have here this name where we will have a default value unless nothing else is specified.
 
-CREATE OR REPLACE TRANSIENT DATABASE TASK_DB;
-
-// Prepare table
-CREATE OR REPLACE TABLE CUSTOMERS (
-    CUSTOMER_ID INT AUTOINCREMENT START = 1 INCREMENT =1,
-    FIRST_NAME VARCHAR(40) DEFAULT 'JENNIFER' ,
-    CREATE_DATE DATE)
-
-And then on top of that, we have this created and now let's see how we can create tasks.
-
-So a task command is really simple.
-
-To create such a task, we can use the create or replace task.
-
-And here we specify the name customer insert and there then we have to specify a few parameters.
-
-So the first one is which warehouse do we have to use?
+To create a task, we can use the create or replace task.  We specify the name customer insert and there then we have to specify a few parameters.  We specify a warehouse.  We are using the compute_wh warehouse but you can change this or create that warehouse if it doesn't exist.
 
 So in our case, we just use this compute warehouse.
 
