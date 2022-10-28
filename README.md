@@ -52,10 +52,20 @@ We need to start our task....this is done with an alter task statement.
 
           //// Task starting and suspending
                  ALTER TASK CUSTOMER_INSERT RESUME;
+                 
+                 ///wait 3 minutes
+                 
+                 //This should show a few records inserted with the task
+                 SELECT * FROM CUSTOMERS;
+                 
+                 //let's stop the task
                  ALTER TASK CUSTOMER_INSERT SUSPEND;
+                 
+                 //Let's see the status of our task
+                 SHOW TASKS;
 
 
-          SELECT * FROM CUSTOMERS
+             
 
 
 So this is really fine.
