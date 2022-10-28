@@ -16,7 +16,7 @@ task and the different scheduling methods.   How can we schedule this and use th
         //Create the Tasks_DB
             CREATE OR REPLACE TRANSIENT DATABASE TASKS_DB;
 
-            USE TASKS_DB:
+            USE TASKS_DB;
 
 2. Now, let's create a customer table.  It will have three columns. An ID column where we use an auto increment.
 
@@ -28,86 +28,35 @@ If no name is specified, then the first name will be 'Marcus'
             CREATE OR REPLACE TABLE CUSTOMERS (
             CUSTOMER_ID INT AUTOINCREMENT START = 1 INCREMENT =1,
             FIRST_NAME VARCHAR(40) DEFAULT 'Marcus' ,
-            CREATE_DATE DATE)
+            CREATE_DATE DATE);
 
 
-To create a task, we can use the create or replace task.  We specify the name customer insert and there then we have to specify a few parameters.  We specify a warehouse.  We are using the compute_wh warehouse but you can change this or create that warehouse if it doesn't exist.
+To create a task, we can use the create or replace task.  We specify the name customer insert and there then we have to specify a few parameters.  We specify a warehouse.  We are using the compute_wh warehouse but you can change this or create that warehouse if it doesn't exist.  The tasks are run to the minute - so just multiple by 60 to get to hours.
 
-So in our case, we just use this compute warehouse.
 
-And then also we and this is a very important parameter.
+        // Create task
+             CREATE OR REPLACE TASK CUSTOMER_INSERT
+             WAREHOUSE = COMPUTE_WH
+             SCHEDULE = '1 MINUTE'
+                        AS 
+             INSERT INTO CUSTOMERS(CREATE_DATE) VALUES(CURRENT_TIMESTAMP);
+             
+To see what tasks we have in our system we can run the following:
 
-We have to specify the schedule.
+              //Show the tasks on our instance  
+              SHOW TASKS;
 
-And here we have two options.
+The show tasks command will give us a wealth of information about our tasks.  Review each column to see the status and details of our tasks.
 
-In this lecture, we will have a look at the first option.
+We need to start our task....this is done with an alter task statement.
 
-So this first option is very simple.
+          //// Task starting and suspending
+                 ALTER TASK CUSTOMER_INSERT RESUME;
+                 ALTER TASK CUSTOMER_INSERT SUSPEND;
 
-We just specify the interval in minutes and we do this exactly like this.
 
-So we only have here this option currently with minutes.
+          SELECT * FROM CUSTOMERS
 
-We cannot use hours, days and so on.
-
-If we want to do that, for example, we want to say this job or this task should run every hour, then
-
-we have to specify 60 Minutes.
-
-So everything here we have to specify in minutes.
-
-Let's revert this back so we can quickly also see the results back to one minute.
-
-And after this, we have to define the actual task.
-
-So we do this here using this as and then in here we can use one sequel's statement.
-
-In this case, this will be an insert into and we insert into the customer table and we only want to
-
-insert something here in the create date.
-
-So we use the current timestamp because the other values are auto increment for our ID.
-
-So this will be there automatically as well as this first night.
-
-This will be also there automatically.
-
-So we have here this default.
-
-So let's go ahead and just quickly create this task.
-
-So if we have this task created now, it is not already running.
-
-So this we can see if we execute your show task.
-
-So here we get this information or this list about all of our tasks.
-
-So in here, we see we have only one task.
-
-So this is our object and this is called here customer insert.
-
-And let's have a look what other properties we have.
-
-Of course, we have here this warehouse that is used for the compute resource.
-
-We have the schedule which we have set to one minute.
-
-And then also here, of course, this definition and also here, this state.
-
-So here we see that this is if we create this is as per default, suspended.
-
-So we first need to start this task using the altered task command so we can do this, just execute
-
-this altor task, the task name, and then resume.
-
-So if we execute this, the task will be started and from now on, it will be working.
-
-So we can also, again, suspend this task again so we can have a look in here to just verify that it
-
-is not suspended.
-
-So we see now the state is not.
 
 So this is really fine.
 
