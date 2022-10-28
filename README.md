@@ -67,78 +67,41 @@ We need to start our task....this is done with an alter task statement.
 
              
 
-
-So this is really fine.
-
-And we can also then suspended again, again using this altor task command and then here just use the
-
-value suspend.
-
-Now, we, of course, want to see the result and check if something has been already written.
-
-So we have to wait probably for one minute and then we'll be back to have a look at the result.
-
-So now we see that we have until now, already two values inserted, so we see that this works.
-
-But now I've already mentioned that this is only one method of scheduling.
-
-And as this is one of the most important parameters in this task, we are also interested in the other
-
-method and the other way of scheduling here.
-
-And that is what we would have a look at in the next lecture.
-
-So in the last lecture, we've seen how easily we can create a task that is executing a sexual statement
-
-and we've learned about this scheduling method where we can specify the interval.
-
-So in this situation, this would mean that every minute this secure command would be executed.
-
-Of course, we could specify other numbers in here, such as 60 Minutes, for example, like this every
-
-60 minutes.
-
-Then this would run just every 60 minutes.
-
-And there is now, apart from this method, another way of doing that, and this is using this Chron
-
-here.
-
-So in the beginning, this might look a little bit complicated, but don't worry, it's not that complicated.
-
-So in here, this is the last one.
-
-We can just specify the time zone.
+There is another method of scheduling. 
 
 So in this situation, I have just used UTC because this is an easy one.
 
 But we could also specify here a different time zone and then we have here after we have specified using
 
-drones.
+cron.
 
-This is something we always need.
+                //  
+                CREATE OR REPLACE TASK CUSTOMER_INSERT
+                   WAREHOUSE = COMPUTE_WH
+                  SCHEDULE = 'USING CRON 0 7,10 * * 5L UTC'
+                  AS 
+                 INSERT INTO CUSTOMERS(CREATE_DATE) VALUES(CURRENT_TIMESTAMP);
+    
 
-Then we have here these five stars and they have a certain meaning.
+                # __________ minute (0-59)
+                # | ________ hour (0-23)
+                # | | ______ day of month (1-31, or L)
+                # | | | ____ month (1-12, JAN-DEC)
+                # | | | | __ day of week (0-6, SUN-SAT, or L)
+                # | | | | |
+                # | | | | |
+                # * * * * *
 
-Let's have a look at this little graph that is explaining this, these meanings of these stars.
 
-So the first star stands for the minutes.
-
-So we could specify here, for example, a value of zero.
+So the first star stands for the minutes.  So we could specify here, for example, a value of zero. 
 
 That means we have always when the minutes are at zero, that means every full hour this would be executed.
 
 And if we specify it like this, this would mean that every full hour, but only if it's seven o'clock.
 
-So these values must be true.
-
 So at 7:00 a.m., this would be executed every day because we did not specify here the day of the month.
 
-We did not specify the month and we did not specify the day of the week if we use here this value Sunday.
-
-So as you kn as we can see it in here, this would mean that every Sunday at 7:00 a.m. we want to execute
-
-this job.
+This would mean that every Sunday at 7:00 a.m. we want to execute this job.
 
 We could also specify another minute value.
 
