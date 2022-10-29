@@ -1,12 +1,4 @@
-Some queries take a long time to run.  The users get angry AND the costs can get fairly high for compute time.  A materialized 
-
-view is one approach to minimize costs and frustration of users.  A regular view is just the text of a query saved to a named 
-
-object but a materialized view actually stores data!  An MV is queried with a regular select statement.  When one of the base 
-
-tables of the materialized view is updated, the MV is also updated.  Snowflake monitors changes to the base tablea and keeps the 
-
-materialized views updated
+Some queries take a long time to run.  The users get angry AND the costs can get fairly high for compute time.  A materialized view is one approach to minimize costs and frustration of users.  A regular view is just the text of a query saved to a named object but a materialized view actually stores data!  An MV is queried with a regular select statement.  When one of the base tables of the materialized view is updated, the MV is also updated.  Snowflake monitors changes to the base tablea and keeps the materialized views updated
 
   //-- Remove caching just to have a fair test -- 
   
@@ -23,7 +15,8 @@ materialized views updated
     CREATE OR REPLACE TRANSIENT DATABASE ORDERS;
     use database orders;
     
-    //here we create a schema to work with
+ Here we create a schema to work with:
+        
     CREATE OR REPLACE SCHEMA orders.TPCH_SF100;
 
     CREATE OR REPLACE TABLE orders.TPCH_SF100.ORDERS AS
@@ -31,7 +24,7 @@ materialized views updated
 
     SELECT * FROM ORDERS LIMIT 100;
     
-    Here is a SQL query that could be replaced with a materialized view:
+Here is a SQL query that could be replaced with a materialized view:
     
     -- Example statement view -- 
       SELECT
@@ -43,11 +36,9 @@ materialized views updated
       FROM ORDERS.TPCH_SF100.ORDERS
       GROUP BY YEAR(O_ORDERDATE)
       ORDER BY YEAR(O_ORDERDATE);
-      
-      
+           
       //Here is our materialzied view code:
       
-
     -- Create materialized view
       CREATE OR REPLACE MATERIALIZED VIEW ORDERS_MV
       AS 
@@ -60,8 +51,8 @@ materialized views updated
       FROM ORDERS.TPCH_SF100.ORDERS
       GROUP BY YEAR(O_ORDERDATE);
       
-      //let's have a look and see if the mv exists.  Note that you can see the base query text used
-      //to create the view
+  let's have a look and see if the mv exists.  Note that you can see the base query text used to create the view
+        
         SHOW MATERIALIZED VIEWS;
 
        // Query the view and not the query duration
