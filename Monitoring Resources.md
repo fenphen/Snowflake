@@ -1,5 +1,17 @@
-    -- Table Storage
+Monitoring Resource Usage
 
+
+So we know that we mainly pay what we use in terms of data storage and also the usage of the compute
+
+resources.  There are ways to view general usage through the interface. But we can also query the base tables to
+
+see more detailed usage information
+    
+    use Accountadmin;
+    
+    -- Table Storage
+    //This view monitors data storage for tables
+    //we have tables and information about tables, schemas,  time travel bytes and fail safe bytes.
     SELECT * FROM "SNOWFLAKE"."ACCOUNT_USAGE"."TABLE_STORAGE_METRICS";
 
     -- How much is queried in databases
