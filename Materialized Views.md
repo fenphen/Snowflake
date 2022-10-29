@@ -1,3 +1,5 @@
+Materialized Views
+
 Some queries take a long time to run.  The users get angry AND the costs can get fairly high for compute time.  A materialized view is one approach to minimize costs and frustration of users.  A regular view is just the text of a query saved to a named object but a materialized view actually stores data!  An MV is queried with a regular select statement.  When one of the base tables of the materialized view is updated, the MV is also updated.  Snowflake monitors changes to the base tablea and keeps the materialized views updated
 
   //-- Remove caching just to have a fair test -- 
