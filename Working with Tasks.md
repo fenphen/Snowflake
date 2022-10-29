@@ -109,198 +109,69 @@ cron.
 
 
 
+We can also create what is called a tree of tasks.  These are tasks that are dependent on one another. This allows the tasks
 
+to be developed and maintained independently to allow for modularity. It is possible for one task to have up to 100 child 
 
-But as you can see in here, it can be possible that one parent task can have multiple child tasks,
+tasks.  First, let us use the task_db database, review our tasks, suspend the original task, and look at our customer records:
 
-indeed, up to 100 child tasks for one parent task.
+        USE TASK_DB;
+ 
+        SHOW TASKS;
 
-Xiaoli and also one complete tree of tasks can include up to 1000 tasks.
+        SELECT * FROM CUSTOMERS;
 
-So it's almost unlimited FOX.
+        // Prepare a second table
+        CREATE OR REPLACE TABLE CUSTOMERS2 (
+            CUSTOMER_ID INT,
+            FIRST_NAME VARCHAR(40),
+            CREATE_DATE DATE)
 
-But now let's have a look at how we can implement these trees of tasks.
 
-So the syntax for this is pretty simple.
+        // Suspend parent task
+        ALTER TASK CUSTOMER_INSERT SUSPEND;
+        
+Now we can create a child task that is dependent upon the customer_insert task we created above:
 
-Just instead of this schedule property, we use the after property and then here we just specify this
+        
+        // Create a child task
+        CREATE OR REPLACE TASK CUSTOMER_INSERT2
+          WAREHOUSE = COMPUTE_WH
+          AFTER CUSTOMER_INSERT
+          AS 
+         INSERT INTO CUSTOMERS2 SELECT * FROM CUSTOMERS;
+         
+Let's go a step further: let's create a third table called Customer3 and another child task depended on our first child task:
+    
+        // Prepare a third table
+        CREATE OR REPLACE TABLE CUSTOMERS3 (
+            CUSTOMER_ID INT,
+            FIRST_NAME VARCHAR(40),
+            CREATE_DATE DATE,
+            INSERT_DATE DATE DEFAULT DATE(CURRENT_TIMESTAMP))    
 
-parent task and the rest is just as we already know it.
 
-Also, we can alter an existing task just by adding this after property here as well.
+        // Create a child task
+        CREATE OR REPLACE TASK CUSTOMER_INSERT3
+            WAREHOUSE = COMPUTE_WH
+            AFTER CUSTOMER_INSERT2
+            AS 
+            INSERT INTO CUSTOMERS3 (CUSTOMER_ID,FIRST_NAME,CREATE_DATE) SELECT * FROM CUSTOMERS2;
 
-So this is possible as well.
+Note the syntax: instead of this schedule property, we use the after property and then here we just specify this
 
-So you see, it is pretty simple to implement such a tree of tasks.
+parent task and the rest is just as we already know it.  Also, we can alter an existing task just by adding this after 
 
-So therefore, now let's have a look at some practical example and see in practice how we can implement
+property here as well.
 
-these trees of tasks.
+We can use these tasks for a variety of things just as you would schedule a cron job or other operating system job.
 
+We can test this tree by inserting into a table:
 
-So the first step, we want to make sure we are in the right database, therefore, we want to use this
-
-command.
-
-So just that we have set here this appropriate context.
-
-Now we want to just see what we have done up until now.
-
-So we see we have created already one task.
-
-So this is the task customer insert.
-
-And now let's also verify that we have here in this table.
-
-So this was what this task was doing, writing here, rows in this table.
-
-So this has worked fine and we have already inserted twenty nine rolls.
-
-So now we want to create child tasks to this task that is inserting these roles.
-
-So therefore we will prepare a second table.
-
-Note that we have the same column names, but we don't have these default values, so we will do something
-
-a little bit different.
-
-But first, if we want to create these child tasks, we should suspend this parent task.
-
-So therefore we alter this customer task and suspend it.
-
-So this was our parent task and we want to suspend this first.
-
-Now let's create these child tasks.
-
-So we see it is very simple.
-
-We have just our normal create or replace task here.
-
-Our task name, we have the same warehouse.
-
-And then he just instead of this schedule, we use this key word after and then we just specify here
-
-this parent task.
-
-And here the definition or the sexual statement that should be executed is just to insert into this
-
-newly created customer to table.
-
-And we want to insert everything that is currently in this customer's table.
-
-Note that currently there are already 29 rolls.
-
-So that means that in the first execution of this task, twenty nine rolls will be inserted in the second
-
-time, probably then 30 rolls will be inserted.
-
-So this is here, this definition of this task.
-
-Now, let's also execute this one.
-
-So we have successfully created this child task.
-
-Now let's go ahead and create even one more task.
-
-So this will be the last one.
-
-So therefore, we will also create a third table.
-
-So in here, we also insert another date.
-
-So just to make it a little bit more interesting.
-
-So here we can have a default.
-
-So it will be, again, the current timestamp.
-
-And now we want to create this last task.
-
-So this is then again, copying everything from this customer to table here in this customer three table.
-
-And this will be executed after this customer insert to task will be completed.
-
-So let's also create this task and now we can again show all of our tasks just to see that now we have
-
-three tasks and we have these created here.
-
-We also see that we are the owner.
-
-And that's also important to note that these tasks have all of the privileges that are from the owner.
-
-So these privileges from the owner will be inherited to these tasks.
-
-So this is something that is important to note.
-
-And also we have here currently the schedule of 60 Minutes.
-
-Therefore, let's also go ahead and alter this task.
-
-So we use the altered task and we want to alter the customer insert and we want to set the schedule
-
-to one minute so that we can just verify the results a little bit quicker.
-
-So therefore, we'll do this.
-
-It has been altered successfully.
-
-Now let's have a look at the tasks again.
-
-And we see we have here one minute and also in here we see the Predecessors'.
-
-So this is here, these dependencies that we have created.
-
-And also we note that all of these tasks are currently suspended, of course.
-
-So therefore, we need to resume then and we need to start with the parent task.
-
-Therefore, let's start with resuming this first task, also the second one and then also the last one.
-
-So now we have all of our task.
-
-We can verify this using the tasks we have all of our tasks started here.
-
-We have one schedule and here we have these predecessors'.
-
-So this is what we have.
-
-And now we are curious of.
-
-Out the results here in this customer two, so let's wait a little bit and then we will come back and
-
-see the results in here.
-
-So now we see we have 30 rolls inserted, not that before in this customer's one, we had twenty nine
-
-rolls, so then this first task got completed, so there was one more roll inserted.
-
-So then in this first table there were 30 rolls.
-
-And now all of these 30 rows are now copied or inserted into this customer to table.
-
-And all of those results were then also copied into this customer's three table.
-
-So in here they are also 30 rows.
-
-We have here this created.
-
-And also on top of that, we have this insert.
-
-And so we have seen that we can easily also create dependencies just by specifying here this parent
-
-task and the after proper.
-
-Hope it was helpful and see you in the next lecture.
-
-Now, to get a little bit more advanced, let's also have a look at how we can call a stored procedure
-
-so we will not talk about how our procedures work in general.
-
-Just here, we will create a small and simple example stored procedure.
-
-So, first of all, again, we want to set the right context and we want to verify that in this customer's
-
-table.
+         //insert a test row
+         INSERT INTO CUSTOMERS(CREATE_DATE) VALUES(CURRENT_TIMESTAMP);
+         
+         //if you successfully created the task tree then all three tables will have a row created!!
 
 Currently, in our case, there are 48 rules.
 
