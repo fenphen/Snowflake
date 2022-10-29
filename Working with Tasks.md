@@ -64,9 +64,8 @@ We need to start our task....this is done with an alter task statement.
                  //Let's see the status of our task
                  SHOW TASKS;
 
-
+Not the status has changed of our tasks in this example.
              
-
 There is another method of scheduling. 
 
 So in this situation, I have just used UTC because this is an easy one.
@@ -91,111 +90,26 @@ cron.
                 # | | | | |
                 # | | | | |
                 # * * * * *
+       
+                // Example of how to run this Every minute
+                SCHEDULE = 'USING CRON * * * * * UTC'
+
+                //  Example of how to run thisEvery day at 6am UTC timezone
+                SCHEDULE = 'USING CRON 0 6 * * * UTC'
+
+                //  Example of how to run thisEvery hour starting at 9 AM and ending at 5 PM on Sundays 
+                SCHEDULE = 'USING CRON 0 9-17 * * SUN America/Los_Angeles'
 
 
-So the first star stands for the minutes.  So we could specify here, for example, a value of zero. 
+                CREATE OR REPLACE TASK CUSTOMER_INSERT
+                 WAREHOUSE = COMPUTE_WH
+                 SCHEDULE = 'USING CRON 0 9,17 * * * UTC'
+                  AS 
+                 INSERT INTO CUSTOMERS(CREATE_DATE) VALUES(CURRENT_TIMESTAMP);
 
-That means we have always when the minutes are at zero, that means every full hour this would be executed.
 
-And if we specify it like this, this would mean that every full hour, but only if it's seven o'clock.
 
-So at 7:00 a.m., this would be executed every day because we did not specify here the day of the month.
 
-This would mean that every Sunday at 7:00 a.m. we want to execute this job.
-
-We could also specify another minute value.
-
-This would mean then at seven thirty every Sunday UTC time this would be executed.
-
-Also, note that we can specify a range of values, so, for example, here for the weekdays, we can
-
-also specify a range.
-
-So this could mean that, for example, we could say we want to have Monday till Friday.
-
-So every weekday at seven thirty, this would be executed.
-
-So this means that we can also specify a range.
-
-Another way would be to execute it like this.
-
-So every hour or if we just specify it like this, so then this would mean that every weekday if we
-
-have the full hour, so always between seven and 10.
-
-So this would be executed at 7:00, at 8:00, at 9:00 and at 10:00.
-
-So we can specify like this also a range of values.
-
-Another example, if we want to specify multiple values, but not a complete range, we could also use
-
-a comma.
-
-So this would then mean that here again every weekday and here at seven and at 10:00 a.m., so like
-
-this, we don't have the range in between seven and 10, but we have here only at seven and at 10:00.
-
-So we can specify multiple values, just separating them using a comma.
-
-And in here we have these wild cards.
-
-The last thing we are maybe a little bit curious about is this L in here.
-
-So this would mean that this is the last day of the month, because sometimes the months we now have
-
-different numbers of days and we always want to have it at the last day of the month.
-
-And for this, we could then also here use an L, and this would mean then every last day in the month
-
-and for the weekday, this has a little bit of a special meaning, but it is similar.
-
-So we could use a construct like this and this would mean that the last Friday of the month.
-
-So last Friday of the month, and this is what we can use here in this weekday, so we can use this
-
-in here for the weekday and also here in the month.
-
-So it will be always the last in the month.
-
-So this is the meaning of this, so let's have a look at this example to just practice this a little
-
-bit and here we see we can use this and this will be executed at six a.m. UTC time zone.
-
-So this we already know.
-
-And now this would mean in here that starting at 9:00 a.m. until 5:00 p.m., only on Sundays for America,
-
-Los Angeles time zone.
-
-And in here we have the other example that this will be executed twice every day, UTC Time Zone at
-
-9:00 and at 5:00 p.m..
-
-So in this lecture, we've seen that we have here also this alternative method of scheduling.
-
-Hope it was helpful.
-
-And see you in the next lecture.
-
-So now let's have a look at how we can also create trees of tasks so like this, we can create dependencies
-
-between our tasks that we have created.
-
-So as you can see in here, such a tree of tasks, of course, consists out of one root task.
-
-So this is one task that needs to be scheduled.
-
-So this is not depending on any other task.
-
-And then these PERREN tasks can have child tasks.
-
-That means that we create a dependencies that is just using here the completion of this root task.
-
-So once the parent tasks are completed, the child tasks will be started.
-
-So like this, we can create a dependency node that one child task can have only one parent task.
-
-So it is not possible currently that one child task has multiple parent tasks.
 
 But as you can see in here, it can be possible that one parent task can have multiple child tasks,
 
