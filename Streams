@@ -20,4 +20,12 @@ First, let us create a database and a table to practice our streams:
         
  Note that the database will be deleted from our Snowflake instance when we logout (remember that keyword transient?)
  
+ Stream objects don't store data - they just move data from one place to another, so we don't pay for much additional storage. 
+ 
+ We can query streams.  This may seem strange but we will see how this works in a minute.  The stream holds any changes to the
+ 
+ source table that 
+ 
+ 
+ 
  
