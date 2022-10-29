@@ -87,5 +87,5 @@ Here is a SQL query that could be replaced with a materialized view:
 
       SHOW MATERIALIZED VIEWS;
         
-Use an MV when the query would normally take a long time due to joins, etc...and when the underlying data does not change that frequently.
+Use an MV when the query would normally take a long time due to joins, etc...and when the underlying data does not change that frequently.  Joins, some aggregated functions, UDFs, HAVING clauses, ORDER BY clauses, and LIMIT clauses are not allowed inside MVs (for now) but Snowflake is always adding functionality, so stay tuned!
 
