@@ -4,4 +4,27 @@ view is one approach to minimize costs and frustration of users.  A regular view
 
 object but a materialized view actually stores data!  An MV is queried with a regular select statement.  When one of the base 
 
-tables of the materialized view is updated, the MV is also updated.  
+tables of the materialized view is updated, the MV is also updated.  Snowflake monitors changes to the base tablea and keeps the 
+
+materialized views updated
+
+  //-- Remove caching just to have a fair test -- 
+  
+      //if compute_wh warehouse does not exist be sure to create it!
+
+    ALTER SESSION SET USE_CACHED_RESULT=FALSE; -- disable global caching to get clearer results
+    ALTER warehouse compute_wh suspend;
+    ALTER warehouse compute_wh resume;
+
+    -- Prepare a transient database (orders), a schema (TPCH_SF100) and a table named orders all in the snowflake_sample_data
+    database
+    
+    CREATE OR REPLACE TRANSIENT DATABASE ORDERS;
+    use database orders;
+    CREATE OR REPLACE SCHEMA orders.TPCH_SF100;
+
+    CREATE OR REPLACE TABLE orders.TPCH_SF100.ORDERS AS
+    SELECT * FROM SNOWFLAKE_SAMPLE_DATA.TPCH_SF100.ORDERS;
+
+    SELECT * FROM ORDERS LIMIT 100
+
