@@ -1,0 +1,5 @@
+Streams are useful for ETL.  We use them to write data from our data sources into our Snowflake tables.  We might want to add 
+
+what has changed in our source table into our target table.  Streams are objects that record (DML) changes made to a source
+
+table.
