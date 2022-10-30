@@ -13,7 +13,7 @@ Let's start by creating a database to do all of our work and make sure we are us
       
       USE ROLE ACCOUNTADMIN;
       Create or replace database demo_db;
-      
+      Create or replace warehouse COMPUTE_WH;
       USE DEMO_DB;
       
 Now let us create a sample table to fill with sample data.
@@ -50,10 +50,13 @@ Now let us give some permissions to the roles so that anyone in that role can se
       GRANT SELECT ON TABLE DEMO_DB.PUBLIC.CUSTOMERS TO ROLE ANALYST_MASKED;
       GRANT SELECT ON TABLE DEMO_DB.PUBLIC.CUSTOMERS TO ROLE ANALYST_FULL;
 
+The role users will need to have access to the schema that holds our table.
+
       GRANT USAGE ON SCHEMA DEMO_DB.PUBLIC TO ROLE ANALYST_MASKED;
       GRANT USAGE ON SCHEMA DEMO_DB.PUBLIC TO ROLE ANALYST_FULL;
 
-      -- grant warehouse access to roles
+Let's be sure to grant warehouse access to these new roles.
+
       GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE ANALYST_MASKED;
       GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE ANALYST_FULL;
 
@@ -64,8 +67,7 @@ Now let us give some permissions to the roles so that anyone in that role can se
       GRANT ROLE ANALYST_FULL TO USER testuser;
 
 
-
-      -- Set up masking policy
+This is our actual masking policy.  Check out more here: https://docs.snowflake.com/en/user-guide/security-column-ddm-intro.html
 
       create or replace masking policy phone 
           as (val varchar) returns varchar ->
@@ -75,11 +77,12 @@ Now let us give some permissions to the roles so that anyone in that role can se
                   end;
 
 
-      -- Apply policy on a specific column 
+Now we need to actually apply the policy to our table:
+
       ALTER TABLE IF EXISTS CUSTOMERS MODIFY COLUMN phone 
       SET MASKING POLICY PHONE;
 
-
+Ok, here we go: Let's try and seel if we can see the policy in place!
 
 
       -- Validating policies
