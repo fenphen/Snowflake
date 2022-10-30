@@ -53,7 +53,7 @@ And now let's have a look and practice how we can implement this and how we can 
 
 
       -- assign roles to a user
-      create user testuser;
+      create or replace user testuser;
       GRANT ROLE ANALYST_MASKED TO USER testuser;
       GRANT ROLE ANALYST_FULL TO USER testuser;
 
@@ -77,11 +77,24 @@ And now let's have a look and practice how we can implement this and how we can 
 
 
       -- Validating policies
-
+      use role accountadmin;
+      grant role analyst_full to role accountadmin;
+      grant usage on database demo_db to role analyst_full;
+      
+      
       USE ROLE ANALYST_FULL;
       SELECT * FROM CUSTOMERS;
 
+      grant role analyst_full to role accountadmin;
+      grant role analyst_masked to role accountadmin;
+      grant usage on database demo_db to role analyst_full;
+      grant usage on database demo_db to role analyst_masked;
+      
+      USE ROLE ANALYST_FULL;
+      SELECT * FROM CUSTOMERS;
+      
+      use role accountadmin;
+      
       USE ROLE ANALYST_MASKED;
       SELECT * FROM CUSTOMERS;
-
 
