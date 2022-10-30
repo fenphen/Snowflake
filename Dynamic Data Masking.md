@@ -8,12 +8,15 @@ that only masked results are returned.  This masking is done at the column level
 
 
 And now let's have a look and practice how we can implement this and how we can use this in snowflake.
+
+Let's start by creating a database to do all of our work and make sure we are using the accountadmin role:
       
+      USE ROLE ACCOUNTADMIN;
       Create or replace database demo_db;
       
       USE DEMO_DB;
-      USE ROLE ACCOUNTADMIN;
-
+      
+Now let us create a sample table to fill with sample data.
 
       -- Prepare table --
       create or replace table customers(
@@ -24,21 +27,24 @@ And now let's have a look and practice how we can implement this and how we can 
         spent number,
         create_date DATE DEFAULT CURRENT_DATE);
 
-      -- insert values in table --
+Ok, now we can fill the table with data:
+
       insert into customers (id, full_name, email,phone,spent)
       values
         (1,'Mike MacDwyer','mike@un.org','262-665-9168',140),
         (2,'Mark Pettingall','mark@mayoclinic.com','734-987-7120',254),
         (3,'Marlee Spadazzi','marlee@txnews.com','867-946-3659',120),
-        (4,'Heywood Tearney','heywood@patch.com','563-853-8192',1230),
-        (5,'Odilia Seti','odilia@globo.com','730-451-8637',143),
-        (6,'Meggie Washtell','margaret@rediff.com','568-896-6138',600);
+        (4,'Carolyn Tearney','heywood@patch.com','563-853-8192',1230),
+        (5,'Marcus Seti','odilia@globo.com','730-451-8637',143),
+        (6,'Mike Fenick','mfenick@broward.edu','568-896-6138',600);
 
 
-      -- set up roles
+Let's set up 2 sample roles that we can use to test our mask.
+
       CREATE OR REPLACE ROLE ANALYST_MASKED;
       CREATE OR REPLACE ROLE ANALYST_FULL;
 
+Now let us give some permissions to the roles so that anyone in that role can see (or not see) or sample data:
 
       -- grant select on table to roles
       GRANT SELECT ON TABLE DEMO_DB.PUBLIC.CUSTOMERS TO ROLE ANALYST_MASKED;
